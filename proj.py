@@ -387,6 +387,7 @@ def tree_gen_node(nb_nodes, tree = None):
 #import doctest
 #doctest.testmod(verbose="true")
 
+
 tree = node()
 tree2 = attach(node(), node())
 tree3 = [[], [[], [[[]]]], [[[], []], []]]
