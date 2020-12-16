@@ -16,9 +16,6 @@ def get(tree, i):
     assert(0 <= i < len(tree))
     return tree[i]
 
-def sort_height(tree1, tree2):
-    return height_tree(tree2) - height_tree(tree1)
-
 def max(val1, val2):
     '''
     Retourne la plus grande valeur entre val1 et val2.
@@ -68,14 +65,12 @@ def height_tree(tree):
 
 def sort_tree_height(tree):
     '''
-    Tri un arbre et le transforme en un arbre gauche
+    Trie un arbre et le transforme en un arbre gauche
+    modifie tree
     '''
-    result = []
-
+    tree.sort(key=height_tree, reverse=True)
     for elem in tree:
-        result.append(sort_tree_height(elem))
-    
-    return result
+        sort_tree_height(elem)
 
 def equal_tree(tree1, tree2):
     '''
@@ -101,8 +96,8 @@ def equal_tree(tree1, tree2):
     copy_tree1 = deepcopy(tree1)
     copy_tree2 = deepcopy(tree2)
 
-    copy_tree1 = sort_tree_height(copy_tree1)
-    copy_tree2 = sort_tree_height(copy_tree2)
+    sort_tree_height(copy_tree1)
+    sort_tree_height(copy_tree2)
     
     return equal_sorted_tree(copy_tree1, copy_tree2)
 
@@ -157,8 +152,6 @@ def nb_node(tree):
         result += (nb_node(elem))
     
     return result
-
-
 
 def write_head_file(file):
     '''
@@ -243,7 +236,7 @@ def boolean_graft(tree1, tree2, current = None, tree_list = []):
     tree_copy = deepcopy(tree1)
     current.pop()
 
-    tree_copy = sort_tree_height(tree_copy)
+    sort_tree_height(tree_copy)
     if(tree_copy not in tree_list):
         new_tree_list.append(tree_copy)
 
@@ -281,7 +274,7 @@ def graft(tree1, tree2, current = None, tree_list = []):
     tree_copy = deepcopy(tree1)
     current.pop()
 
-    tree_copy = sort_tree_height(tree_copy)
+    sort_tree_height(tree_copy)
     for i in range(len(tree_list)):
         if tree_copy == tree_list[i][0]:
             exists = True
@@ -350,7 +343,7 @@ def prelie_product_polynomial(prelie1, prelie2):
     #Addition des doublons
     return prelie_simplifier(result)
 
-def sum_polinomiale(prelie1, prelie2):
+def sum_polinomial(prelie1, prelie2):
     '''
     Retourne la somme des deux polynomes d'arbres prelie1 et prelie2.
     Ne modifie ni prelie1 ni prelie2
@@ -373,6 +366,7 @@ def coef_polynomial(list_tree, tree):
         
     return 0
 
+"""
 def tree_gen_node(nb_nodes, tree = None):
     '''
     retourne la liste de tous les arbres possibles contenant exactement nb_nodes
@@ -383,7 +377,7 @@ def tree_gen_node(nb_nodes, tree = None):
     tree = node()
     for i in range(nb_node - 1):
         tree_lst += tree_gen_node(nb_nodes - 1, )
-
+"""
 #import doctest
 #doctest.testmod(verbose="true")
 
@@ -392,8 +386,8 @@ tree2 = attach(node(), node())
 tree3 = [[], [[], [[[]]]], [[[], []], []]]
 
 print("Arbre trié")
-sorted_tree = sort_tree_height(tree3)
-print(sorted_tree)
+sort_tree_height(tree3)
+print(tree3)
 
 prelie1 = graft(tree2, tree)
 prelie2 = graft(tree, tree2)
@@ -404,8 +398,13 @@ print("prelie2 : "+str(prelie2))
 
 sum1 = [([[[]], []], 5), ([], 3), ([], 2), ([[], [[]]], 2)]
 sum2 = [([], 2)]
-print(prelie_simplifier(sum1))
+print(sum_polinomial(sum1, sum2))
 
+
+test1 = [([[]], 3)]
+test2 = [([], 5)]
+test3 = prelie_product_polynomial(test1, test2)
+print("test : "+str(test3))
 '''
 A faire:
 [X] Représentaiton arbre -> Listes
