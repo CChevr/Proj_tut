@@ -429,12 +429,12 @@ sum1 = [([[[]], []], 5), ([], 3), ([], 2), ([[], [[]]], 2)]
 sum2 = [([], 2)]
 print(sum_polinomial(sum1, sum2))
 
-
 test1 = [([[]], 3)]
 test2 = [([], 5)]
 test3 = prelie_product_polynomial(test1, test2)
 print("test : "+str(test3))
 
+print("test")
 lst = tree_gen_node(4)
 print("nb nodes "+str(lst) + "\tnb arbres : " + str(len(lst)))
 '''
