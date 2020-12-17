@@ -366,18 +366,52 @@ def coef_polynomial(list_tree, tree):
         
     return 0
 
-"""
-def tree_gen_node(nb_nodes, tree = None):
+
+def boolean_graft_rep(tree1, tree2, current = None, tree_list = []):
+    '''
+    Retourne la liste de tous les arbres différents générés par une greffe pré-lie.
+    "tree1" est l'arbre sur lequel "tree2" se greffe. "current" est la position courante
+    dans "tree1", "treeList" est la liste des tous les arbres déjà constitués suite
+    a la greffe de "tree2" sur "tree1".
+    Ne modifie ni "tree1", ni "tree2".
+    '''
+    if(None == current):
+        current = tree1
+
+    new_tree_list = []
+
+    current.append(tree2)
+    tree_copy = deepcopy(tree1)
+    current.pop()
+
+    if(tree_copy not in tree_list):
+        new_tree_list.append(tree_copy)
+
+    for elem in current:
+        new_tree_list += boolean_graft(tree1, tree2, elem, new_tree_list)
+
+    return new_tree_list
+
+
+
+def tree_gen_node(nb_nodes, tree_list = []):
     '''
     retourne la liste de tous les arbres possibles contenant exactement nb_nodes
     '''
+    res = []
     if nb_nodes == 0:
-        return tree_lst
+        return tree_list
     
-    tree = node()
-    for i in range(nb_node - 1):
-        tree_lst += tree_gen_node(nb_nodes - 1, )
-"""
+    if(tree_list == []):
+        return tree_gen_node(nb_nodes-1, [[]])
+    
+    for tree in tree_list:
+        for node in tree:
+            res += boolean_graft_rep(tree_list, node())
+
+    return tree_gen_node(nb_nodes-1, res)
+
+
 #import doctest
 #doctest.testmod(verbose="true")
 
@@ -405,6 +439,8 @@ test1 = [([[]], 3)]
 test2 = [([], 5)]
 test3 = prelie_product_polynomial(test1, test2)
 print("test : "+str(test3))
+
+print("3 noeuds : "+str(tree_gen_node(3)))
 '''
 A faire:
 [X] Représentaiton arbre -> Listes
