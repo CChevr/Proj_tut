@@ -1,6 +1,6 @@
 # Auteurs : L. Gaboriau, C. Chevreuil
 # Creation : 10/11/2020
-# Modification : 01/12/2020
+# Modification : 16/12/2020
 # Projet tuteuré M. GIRAUDO - arbres pré-lie
 
 from copy import deepcopy
@@ -209,7 +209,7 @@ def save_tree_list_file(file_name, tree_list, boolean_graft = False):
             save_tree_file(name, tree_list[i][0])
 
 
-def boolean_graft(tree1, tree2, current = None, tree_list = []):
+def boolean_graft(tree1, tree2, tree_list = [], current = None):
     '''
     Retourne la liste de tous les arbres différents générés par une greffe pré-lie.
     "tree1" est l'arbre sur lequel "tree2" se greffe. "current" est la position courante
@@ -237,11 +237,12 @@ def boolean_graft(tree1, tree2, current = None, tree_list = []):
     current.pop()
 
     sort_tree_height(tree_copy)
+
     if(tree_copy not in tree_list):
         new_tree_list.append(tree_copy)
 
     for elem in current:
-        new_tree_list += boolean_graft(tree1, tree2, elem, new_tree_list)
+        new_tree_list += boolean_graft(tree1, tree2, new_tree_list, elem)
 
     return new_tree_list
 
@@ -332,6 +333,8 @@ def prelie_product_polynomial(prelie1, prelie2):
     Retourne le produit de deux arbres pre-lie
     Dans un premier temps faire la multiplication de tous les arbres
     puis faire une réduction en comparant chaque arbres aux autres
+
+    Soucis avec les arbres d'un seul noeud
     '''
     result = []
 
@@ -367,76 +370,77 @@ def coef_polynomial(list_tree, tree):
     return 0
 
 
-def boolean_graft_rep(tree1, tree2, tree_list = [], current = None):
-    '''
-    Retourne la liste de tous les arbres différents générés par une greffe pré-lie.
-    "tree1" est l'arbre sur lequel "tree2" se greffe. "current" est la position courante
-    dans "tree1", "treeList" est la liste des tous les arbres déjà constitués suite
-    a la greffe de "tree2" sur "tree1".
-    Ne modifie ni "tree1", ni "tree2".
-    '''
-    if(None == current):
-        current = tree1
 
-    new_tree_list = []
+def affiche_list(lst):
+    for elem in lst:
+        print(elem)
 
-    current.append(tree2)
-    tree_copy = deepcopy(tree1)
-    current.pop()
+    print()
+    print()
 
-    if(tree_copy not in tree_list):
-        new_tree_list.append(tree_copy)
 
-    for elem in current:
-        new_tree_list += boolean_graft_rep(tree1, tree2, new_tree_list, elem)
 
-    return new_tree_list
 
-def tree_gen_node(nb_nodes, tree_list = []):
+def tree_gen_node(nb_nodes, tree = None, current = None, trees = []):
     '''
     retourne la liste de tous les arbres possibles contenant exactement nb_nodes
-    '''
-    res = []
-    if nb_nodes == 0:
-        return tree_list
-    
-    if(tree_list == []):
-        return tree_gen_node(nb_nodes-1, [[]])
-    
-    for tree in tree_list:
-        res += boolean_graft_rep(tree, node(), res)
+    doublons -> faire en itératif -> 
+    Ne fonctionne pas car boolean_graft crééé une nouvelle liste à chaque 'boucle'
+    donc ne se préoccupe pas des éléments à n noeuds déjà créés avant
+    -> faire une fonction qui regarde dans cette liste plutot
 
-    return tree_gen_node(nb_nodes-1, res)
+    possibilité de parcourir toute la liste des résultats mais risque de couter beaucoup
+        -> double vérification, une fois dans boolean_graft, une autre fois ici
+
+    Pour tous les arbres d'une liste:
+        - parcourir tous les noeuds
+            - ajouter un noeud -> ajoter une copie de cette arbre dans la liste des arbres
+                ou
+            - passer aux noeuds fils    
+    '''
+    result = []   
+    
+    if nb_nodes == 0:
+        tree_copy = deepcopy(tree)
+        result.append(tree_copy)
+        return result
+
+    if tree == None:
+        result.append(node())
+        tree = node()
+        return tree_gen_node(nb_nodes - 1, tree, tree, result)
+    
+    current.append(node())
+    result += tree_gen_node(nb_nodes - 1, tree, current, result)
+    current.pop()
+    
+    for elem in current:
+        result += tree_gen_node(nb_nodes, tree, elem, trees)
+
+    return result
+
+
 #import doctest
 #doctest.testmod(verbose="true")
 
 tree = node()
-tree2 = attach(node(), node())
-tree3 = [[], [[], [[[]]]], [[[], []], []]]
+tree2 = [[[]], []]
+tree3 = [[]]
 
-print("Arbre trié")
-sort_tree_height(tree3)
-print(tree3)
+tree4 = ([[], []], 1)
+tree5 = ([], 1)
 
-prelie1 = graft(tree2, tree)
-prelie2 = graft(tree, tree2)
+test = tree_gen_node(3)
+print(test)
 
-print("prelie1 : "+str(prelie1))
-print("prelie2 : "+str(prelie2))
-#print(prelie_product_polynomial(prelie1, prelie2))
 
-sum1 = [([[[]], []], 5), ([], 3), ([], 2), ([[], [[]]], 2)]
-sum2 = [([], 2)]
-print(sum_polinomial(sum1, sum2))
-
-test1 = [([[]], 3)]
-test2 = [([], 5)]
-test3 = prelie_product_polynomial(test1, test2)
-print("test : "+str(test3))
-
+'''
 print("test")
-lst = tree_gen_node(4)
-print("nb nodes "+str(lst) + "\tnb arbres : " + str(len(lst)))
+for i in range(6):
+    lst = tree_gen_node(i)
+    print(len(lst))
+'''
+
 '''
 A faire:
 [X] Représentaiton arbre -> Listes
